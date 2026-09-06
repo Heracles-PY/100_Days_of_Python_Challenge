@@ -1,59 +1,61 @@
 import random
 import nltk
-nltk.download('words')
+
+nltk.download("words")
 from nltk.corpus import words
 
 import hangman_art
+
 print(hangman_art.logo)
 
-word_list = words.words()
+# Filter words to only lowercase, alphabetic entries between 4 and 10 letters
+word_list = [
+    w.lower()
+    for w in words.words()
+    if w.isalpha() and w.islower() and 4 <= len(w) <= 10
+]
 
 chosen_word = random.choice(word_list)
 
-placeholder = ""
-word_length = len(chosen_word)
-for position in range(word_length):
-    placeholder += "_"
-print(f"Word to guess: {placeholder}")
-
-game_over = False
-correct_letters = []
-guessed_letters = []
 lives = 6
+guessed_letters = set()
+game_over = False
+
+print(f"Word to guess: {'_ ' * len(chosen_word)}")
 
 while not game_over:
-    print(f"****************************{lives}/6 LIVES LEFT****************************")
-    guess = input("Guess a letter: ").lower()
+    print(f"\n**************************** {lives}/6 LIVES LEFT ****************************")
+    guess = input("Guess a letter: ").strip().lower()
 
-    display = ""
+    # Input validation: enforce exactly one alphabetic character
+    if len(guess) != 1 or not guess.isalpha():
+        print("Invalid input. Please enter a single letter (a-z).")
+        continue
 
-    for letter in chosen_word:
-        if letter == guess:
-            display += letter
-            correct_letters.append(guess)
-        elif letter in correct_letters:
-            display += letter
-        else:
-            display += "_"
-
-    print(f"Word to guess: {display}")
-
+    # Prevent duplicate guesses
     if guess in guessed_letters:
-        print(f"You've already guessed {guess}.")
+        print(f"You've already guessed '{guess}'. Try a different letter.")
+        continue
+
+    guessed_letters.add(guess)
+
+    # Check guess against the chosen word
+    if guess in chosen_word:
+        print(f"Good guess! '{guess}' is in the word!")
     else:
-        guessed_letters.append(guess)
-        if guess in chosen_word:
-            print(f"Good guess! {guess} is in the word!")
-        else:
-            print(f"You guessed {guess}, that's not in the word. You lose a life.")
-            lives -= 1
-            print(hangman_art.stages[lives])
+        lives -= 1
+        print(f"'{guess}' is not in the word. You lose a life.")
+        print(hangman_art.stages[lives])
 
-    if lives == 0:
-        game_over = True
-        print(f"The correct word was: {chosen_word}")
-        print(f"***********************YOU LOSE**********************")
+    # Rebuild and show the board
+    display = [letter if letter in guessed_letters else "_" for letter in chosen_word]
+    print(f"Word to guess: {' '.join(display)}")
 
+    # Check win/loss conditions
     if "_" not in display:
         game_over = True
-        print("****************************YOU WIN****************************")
+        print("\n**************************** YOU WIN! ****************************")
+    elif lives == 0:
+        game_over = True
+        print(f"\nThe correct word was: {chosen_word}")
+        print("**************************** YOU LOSE ****************************")
