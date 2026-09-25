@@ -1,8 +1,6 @@
 # Display art
-from art import logo, vs
 from game_data import data
-from art import logo
-from art import vs
+from art import logo, vs
 import random
 
 
