@@ -1,0 +1,26 @@
+from turtle import Turtle, Screen
+
+trudy = Turtle()
+trudy.shape("turtle")
+trudy.color("red")
+trudy.pencolor("green")
+
+trudy.forward(10)
+trudy.penup()
+trudy.forward(10)
+trudy.pendown()
+trudy.forward(10)
+trudy.penup()
+trudy.forward(10)
+trudy.pendown()
+trudy.forward(10)
+trudy.penup()
+trudy.forward(10)
+trudy.pendown()
+trudy.forward(10)
+trudy.penup()
+trudy.forward(10)
+trudy.pendown()
+
+screen = Screen()
+screen.exitonclick()
